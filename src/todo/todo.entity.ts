@@ -5,7 +5,7 @@ export class Todo extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ type: "text" })
   body: string;
 
   @Column()

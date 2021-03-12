@@ -1,7 +1,13 @@
-import { Module } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
+import { LoggerMiddleware } from "./middlewares/logger.middleware";
 import { TodoModule } from "./todo/todo.module";
 
 @Module({
@@ -9,10 +15,10 @@ import { TodoModule } from "./todo/todo.module";
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "postgres",
-      password: "1234",
+      host: process.env.DATABASE_HOST,
+      port: Number(process.env.DATABASE_PORT),
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
       database: "todo-api",
       entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true,
@@ -21,4 +27,8 @@ import { TodoModule } from "./todo/todo.module";
   ],
   controllers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes("*");
+  }
+}
