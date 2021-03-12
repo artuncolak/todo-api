@@ -1,11 +1,8 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { ServeStaticModule } from "@nestjs/serve-static";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { join } from "path";
 
 import { LoggerMiddleware } from "./middlewares/logger.middleware";
 import { TodoModule } from "./todo/todo.module";
@@ -22,6 +19,10 @@ import { TodoModule } from "./todo/todo.module";
       database: "todo-api",
       entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "static"),
+      exclude: ["/api*"],
     }),
     TodoModule,
   ],
