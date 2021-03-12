@@ -13,7 +13,7 @@ export class TodoService {
   }
 
   async getAll(): Promise<Todo[]> {
-    return await Todo.find();
+    return await Todo.find({ order: { dateCreated: "DESC" } });
   }
 
   async getById(id: string): Promise<Todo> {
